@@ -3,106 +3,197 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Fermentadores Hammurabier</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&display=swap">
+<title>Fermentadores El Viaje</title>
+<meta name="theme-color" content="#1c2a4a">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;600&display=swap">
 <style>
-/* Tablero de planta: una tarjeta por fermentador (FM01–FM06), formulario en hoja inferior */
+/* Sala de fermentación: cada FM es un tanque cilindrocónico con su placa, manómetro y válvula de purga.
+   Colores de marca en --marca-*: provisionales hasta tener la paleta de El Viaje. */
 :root {
-  --bg: #eef1f3; --surface: #ffffff; --ink: #15212b; --muted: #5b6873; --line: #d5dce1;
-  --accent: #1f5f8b; --accent-ink: #ffffff; --cold: #1f6fb2; --press: #8a5a00;
-  --warn: #a4580b; --warn-bg: #fdf1e2; --bad: #b3261e; --bad-bg: #fdecea; --chip: #e3e8ec;
-  --shadow: 0 1px 2px rgba(21,33,43,.08);
-  --f-ui: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --marca-1: #1c2a4a;   /* azul noche */
+  --marca-2: #e06a2c;   /* naranja atardecer */
+  --marca-3: #f3c64b;   /* sol */
+  --marca-4: #2f8f83;   /* verde mar */
+  --bg: #f4efe6; --bg-2: #ebe3d5; --surface: #fffaf2; --ink: #1d2433; --muted: #5f6472; --line: #d9cfbf;
+  --accent: var(--marca-1); --accent-ink: #fffaf2; --hot: var(--marca-2);
+  --steel-1: #fbfcfd; --steel-2: #dfe4ea; --steel-3: #aeb7c2; --steel-4: #7e8996; --steel-edge: #6f7a87;
+  --plate: rgba(255, 250, 242, .94); --plate-edge: #c9bfae;
+  --cold: #1f6fb2; --press: #a24a12; --warn: #a4580b; --warn-bg: #fbecd8; --bad: #b3261e; --bad-bg: #fdecea; --chip: #ece4d6;
+  --shadow: 0 10px 24px -14px rgba(28, 42, 74, .45);
+  --f-ui: "Barlow Semi Condensed", "Arial Narrow", system-ui, sans-serif;
+  --f-tit: "Bricolage Grotesque", "Barlow Semi Condensed", system-ui, sans-serif;
   --f-num: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #11171c; --surface: #1a2229; --ink: #e6ecf0; --muted: #98a6b1; --line: #2c3740;
-    --accent: #5fa8dc; --accent-ink: #0d1418; --cold: #7cb9ea; --press: #e0b061; --warn: #f0a85a;
-    --warn-bg: #33261a; --bad: #ff8a80; --bad-bg: #3a1d1b; --chip: #26313a; --shadow: none; color-scheme: dark;
+    --bg: #121a2c; --bg-2: #18223a; --surface: #1b2540; --ink: #eef0f4; --muted: #a7afc0; --line: #2d3a5a;
+    --accent: var(--marca-3); --accent-ink: #1c2a4a;
+    --steel-1: #4f5b6b; --steel-2: #3b4555; --steel-3: #2c3442; --steel-4: #20262f; --steel-edge: #5f6b7b;
+    --plate: rgba(22, 31, 54, .94); --plate-edge: #3a4870;
+    --cold: #7cc0f2; --press: #f2a46a; --warn: #f0a85a; --warn-bg: #3a2a18; --bad: #ff8a80; --bad-bg: #3a1d1b; --chip: #26324f;
+    --shadow: 0 10px 24px -14px rgba(0, 0, 0, .8); color-scheme: dark;
   }
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
-body { background: var(--bg); color: var(--ink); font-family: var(--f-ui); font-size: 15px; line-height: 1.4; }
-.wrap { max-width: 1100px; margin: 0 auto; padding-top: calc(16px + env(safe-area-inset-top, 0px)); padding-bottom: 40px;
+body { background: var(--bg); color: var(--ink); font-family: var(--f-ui); font-size: 16px; line-height: 1.4;
+  background-image: radial-gradient(circle at 1px 1px, var(--bg-2) 1.2px, transparent 1.3px); background-size: 22px 22px; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-bottom: 40px;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
-header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px 16px; margin-bottom: 14px; }
-h1 { font-size: 1.45rem; font-weight: 700; margin: 0; }
-.sub { color: var(--muted); font-size: .9rem; margin-top: 2px; }
-.btn { font-family: var(--f-ui); font-size: .95rem; font-weight: 600; border-radius: 6px; border: 1px solid var(--line);
-  background: var(--surface); color: var(--ink); padding: 8px 14px; cursor: pointer; min-height: 42px; }
+
+/* Cabecera: banda de marca con una ruta punteada (el viaje del mosto al barril) */
+.hero { background: var(--marca-1); color: #fffaf2; position: relative; overflow: hidden;
+  padding-top: calc(18px + env(safe-area-inset-top, 0px)); padding-bottom: 44px; margin-bottom: 18px; }
+.hero .wrap { padding-bottom: 0; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 16px; position: relative; z-index: 1; }
+.hero svg.route { position: absolute; inset: auto 0 0 0; width: 100%; height: 46px; z-index: 0; }
+.brand { font-size: .8rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--marca-3); }
+h1 { font-family: var(--f-tit); font-size: 2rem; font-weight: 800; margin: 0; line-height: 1.05; letter-spacing: -.01em; }
+.sub { color: #c9cfdc; font-size: .95rem; margin-top: 4px; }
+.hero .btn { background: transparent; color: #fffaf2; border-color: rgba(255, 250, 242, .5); }
+.hero .btn:hover { border-color: var(--marca-3); color: var(--marca-3); }
+
+.btn { font-family: var(--f-ui); font-size: 1rem; font-weight: 700; border-radius: 999px; border: 1.5px solid var(--line);
+  background: var(--surface); color: var(--ink); padding: 8px 16px; cursor: pointer; min-height: 44px; }
 .btn:hover { border-color: var(--accent); }
-.btn:focus-visible, input:focus-visible, textarea:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn:focus-visible, input:focus-visible, textarea:focus-visible, a:focus-visible { outline: 3px solid var(--marca-2); outline-offset: 2px; }
+.btn.primary { background: var(--marca-2); color: #fff; border-color: var(--marca-2); }
+.btn.primary:hover { filter: brightness(1.06); }
 .btn.danger { color: var(--bad); border-color: var(--bad); }
-.btn.small { min-height: 36px; padding: 5px 10px; font-size: .88rem; }
-.btn[disabled] { opacity: .55; cursor: default; }
+.btn.small { min-height: 40px; padding: 5px 13px; font-size: .92rem; }
+.btn[disabled] { opacity: .5; cursor: default; }
 a { color: var(--accent); }
-.banner { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; font-weight: 600; }
+.banner { border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; font-weight: 600; }
 .banner.warn { background: var(--warn-bg); border-color: var(--warn); color: var(--warn); }
 .banner.bad { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 12px; }
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow);
-  padding: 14px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-.head { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
-.fm { font-family: var(--f-num); font-weight: 600; font-size: 1.5rem; }
-.lot { min-width: 0; }
-.lot .code { font-family: var(--f-num); font-size: .95rem; font-weight: 600; }
-.lot .prod { color: var(--muted); font-size: .92rem; overflow-wrap: anywhere; }
-.chip { display: inline-block; font-size: .76rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
-  background: var(--chip); color: var(--muted); border-radius: 999px; padding: 2px 9px; }
+
+/* Sala: piso con línea de tierra bajo cada fila de tanques */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 28px 22px; }
+.card { display: flex; flex-direction: column; align-items: stretch; gap: 10px; min-width: 0; }
+.tank { position: relative; width: 100%; max-width: 360px; margin: 0 auto; padding: 0 10px; filter: drop-shadow(var(--shadow)); }
+
+/* Manómetro sobre el domo */
+.gauge { position: absolute; top: -6px; right: 34px; width: 58px; height: 58px; z-index: 3; }
+.gauge svg { width: 100%; height: 100%; display: block; }
+.gauge .needle { transform-origin: 29px 31px; transition: transform .8s cubic-bezier(.3,1.4,.5,1); }
+@media (prefers-reduced-motion: reduce) { .gauge .needle { transition: none; } }
+
+.dome { height: 46px; margin-top: 18px; border-radius: 50% 50% 0 0 / 100% 100% 0 0; position: relative;
+  background: linear-gradient(90deg, var(--steel-3), var(--steel-1) 38%, var(--steel-2) 62%, var(--steel-4));
+  border: 1.5px solid var(--steel-edge); border-bottom: 0; display: flex; align-items: flex-end; justify-content: center; }
+.dome .fm { font-family: var(--f-tit); font-weight: 800; font-size: 1.35rem; letter-spacing: .04em; color: var(--marca-1);
+  background: var(--marca-3); border-radius: 999px; padding: 0 12px; margin-bottom: -12px; position: relative; z-index: 2;
+  box-shadow: 0 0 0 3px var(--surface); }
+.body { position: relative; padding: 22px 12px 14px; overflow: hidden;
+  background: linear-gradient(90deg, var(--steel-3), var(--steel-1) 30%, var(--steel-2) 55%, var(--steel-1) 70%, var(--steel-4));
+  border-left: 1.5px solid var(--steel-edge); border-right: 1.5px solid var(--steel-edge); }
+/* Camisas de enfriamiento: color según la última temperatura */
+.body::before, .body::after { content: ""; position: absolute; left: 0; right: 0; height: 12px; background: var(--jacket, transparent); opacity: .85; z-index: 0; }
+.body::before { top: 34%; } .body::after { top: 70%; }
+.card.frio { --jacket: repeating-linear-gradient(90deg, #5aa7e0 0 10px, #7cbbe9 10px 20px); }
+.card.tibio { --jacket: repeating-linear-gradient(90deg, #e9a25a 0 10px, #f0b878 10px 20px); }
+/* Mirilla de nivel: la cerveza dentro, con su color aproximado por estilo */
+.sight { position: absolute; left: 4px; top: 16px; bottom: 12px; width: 9px; border-radius: 6px; z-index: 1;
+  background: rgba(255,255,255,.35); border: 1px solid var(--steel-edge); overflow: hidden; }
+.sight i { position: absolute; left: 0; right: 0; bottom: 0; height: var(--nivel, 0%); background: var(--cerveza, #d9952b); }
+.plate { position: relative; z-index: 2; background: var(--plate); border: 1px solid var(--plate-edge); border-radius: 10px;
+  padding: 12px; display: flex; flex-direction: column; gap: 10px; min-width: 0; margin-left: 8px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6); }
+.plate::before, .plate::after { content: ""; position: absolute; top: 7px; width: 5px; height: 5px; border-radius: 50%; background: var(--steel-3); }
+.plate::before { left: 7px; } .plate::after { right: 7px; }
+.head { display: flex; align-items: flex-start; gap: 10px; min-width: 0; }
+.lot { min-width: 0; display: flex; flex-direction: column; gap: 3px; align-items: flex-start; }
+.lot .code { font-family: var(--f-num); font-size: 1rem; font-weight: 600; }
+.lot .prod { color: var(--muted); font-size: .95rem; overflow-wrap: anywhere; line-height: 1.25; }
+.beer { display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: var(--cerveza, #d9952b);
+  border: 1.5px solid rgba(0,0,0,.2); vertical-align: -2px; margin-right: 6px; box-shadow: inset 0 3px 0 rgba(255,255,255,.55); }
+.chip { display: inline-block; font-size: .74rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  background: var(--chip); color: var(--muted); border-radius: 999px; padding: 2px 10px; }
+.chip.vacio { background: var(--accent); color: var(--accent-ink); }
 .chip.warn { background: var(--warn-bg); color: var(--warn); }
 .vals { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.val { border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; min-width: 0; }
-.val .lbl { font-size: .74rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-.val .num { font-family: var(--f-num); font-size: 1.55rem; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.val { border-radius: 8px; padding: 8px 9px; min-width: 0; background: var(--bg); }
+.val .lbl { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.val .num { font-family: var(--f-num); font-size: 1.6rem; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.15; }
 .val .num small { font-size: .85rem; font-weight: 400; color: var(--muted); margin-left: 3px; }
 .val.p .num { color: var(--press); } .val.t .num { color: var(--cold); }
-.val .when { font-family: var(--f-num); font-size: .76rem; color: var(--muted); }
-.val .when.old { color: var(--warn); }
+.card.tibio .val.t .num { color: var(--press); }
+.val .when { font-family: var(--f-num); font-size: .74rem; color: var(--muted); }
+.val .when.old { color: var(--warn); font-weight: 600; }
 .val .none { font-size: .95rem; color: var(--muted); padding: 6px 0 2px; }
-.purge { font-size: .88rem; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 9px; }
+
+/* Cono, válvula de purga y patas */
+.cone { height: 64px; position: relative;
+  background: linear-gradient(90deg, var(--steel-3), var(--steel-1) 35%, var(--steel-2) 60%, var(--steel-4));
+  clip-path: polygon(0 0, 100% 0, 57% 100%, 43% 100%); }
+.cone-edge { height: 64px; margin-top: -64px; position: relative; pointer-events: none;
+  background: linear-gradient(var(--steel-edge), var(--steel-edge)) left top / 100% 1.5px no-repeat; }
+.legs { position: relative; height: 54px; margin-top: -40px; }
+.legs::before, .legs::after { content: ""; position: absolute; bottom: 0; width: 7px; height: 100%; background: var(--steel-edge); border-radius: 2px; }
+.legs::before { left: 16%; transform: skewX(6deg); } .legs::after { right: 16%; transform: skewX(-6deg); }
+.valve { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 26px; height: 30px; }
+.valve::before { content: ""; position: absolute; left: 9px; top: 0; width: 8px; height: 20px; background: var(--steel-4); }
+.valve::after { content: ""; position: absolute; left: 0; top: 10px; width: 26px; height: 10px; border-radius: 3px; background: var(--hot); }
+.card.purgado .valve::after { background: var(--marca-4); }
+.floor { height: 6px; border-radius: 3px; background: var(--line); margin: 0 auto; width: 86%; max-width: 330px; }
+.purge { font-size: .92rem; color: var(--muted); text-align: center; padding: 0 8px; }
 .purge b { font-family: var(--f-num); font-weight: 600; color: var(--ink); }
-.actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.actions .btn.primary { flex: 1 1 auto; }
-.foot { margin-top: 18px; color: var(--muted); font-size: .85rem; }
-.scrim { position: fixed; inset: 0; background: rgba(10,16,20,.45); z-index: 20; }
+
+/* Tanque vacío: sin cerveza, acero apagado */
+.card.vacio .tank { filter: drop-shadow(var(--shadow)) saturate(.6); }
+.card.vacio .sight i { height: 0; }
+
+.actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.actions .btn.primary { flex: 1 1 120px; max-width: 200px; }
+.foot { margin-top: 26px; color: var(--muted); font-size: .88rem; text-align: center; }
+.scrim { position: fixed; inset: 0; background: rgba(12,18,32,.5); z-index: 20; }
 .sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 21; background: var(--surface); color: var(--ink);
-  border-radius: 14px 14px 0 0; border-top: 1px solid var(--line); max-height: 92vh; overflow-y: auto;
-  padding-top: 16px; padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  border-radius: 20px 20px 0 0; border-top: 5px solid var(--marca-2); max-height: 92vh; overflow-y: auto;
+  padding-top: 18px; padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .sheet form { max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
-.sheet h2 { margin: 0; font-size: 1.2rem; }
-.ctx { color: var(--muted); font-size: .9rem; margin-top: -6px; }
+.sheet h2 { margin: 0; font-family: var(--f-tit); font-size: 1.35rem; font-weight: 800; }
+.ctx { color: var(--muted); font-size: .95rem; margin-top: -6px; }
 .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-label { display: flex; flex-direction: column; gap: 4px; font-size: .85rem; font-weight: 600; color: var(--muted); min-width: 0; }
+label { display: flex; flex-direction: column; gap: 4px; font-size: .88rem; font-weight: 700; color: var(--muted); min-width: 0; }
 input, textarea { font-family: var(--f-num); font-size: 16px; color: var(--ink); background: var(--bg);
-  border: 1px solid var(--line); border-radius: 6px; padding: 9px 10px; min-height: 44px; width: 100%; }
+  border: 1.5px solid var(--line); border-radius: 10px; padding: 9px 11px; min-height: 46px; width: 100%; }
 textarea { font-family: var(--f-ui); min-height: 60px; resize: vertical; }
-.reject { background: var(--bad-bg); color: var(--bad); border: 1px solid var(--bad); border-radius: 8px; padding: 10px 12px; font-weight: 600; }
+.reject { background: var(--bad-bg); color: var(--bad); border: 1px solid var(--bad); border-radius: 10px; padding: 10px 12px; font-weight: 600; }
 .reject[hidden] { display: none; }
 .formbtns { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
-.progress { height: 3px; background: var(--line); overflow: hidden; border-radius: 2px; }
-.progress i { display: block; height: 100%; width: 40%; background: var(--accent); animation: slide 1.1s linear infinite; }
+.progress { height: 4px; background: var(--line); overflow: hidden; border-radius: 2px; }
+.progress i { display: block; height: 100%; width: 40%; background: var(--marca-2); animation: slide 1.1s linear infinite; }
 @keyframes slide { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
-@media (prefers-reduced-motion: reduce) { .progress i { animation: none; width: 100%; } }
+/* Burbujas en tanques con lote */
+.bub { position: absolute; bottom: 10px; width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.7); z-index: 1;
+  left: var(--x); animation: sube 4.5s ease-in infinite; animation-delay: var(--d); opacity: 0; }
+@keyframes sube { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: .8; } 100% { transform: translateY(-260px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .progress i { animation: none; width: 100%; } .bub { display: none; } }
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px));
-  background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 8px; z-index: 30; font-weight: 600; max-width: calc(100% - 32px); }
+  background: var(--marca-1); color: #fffaf2; padding: 11px 18px; border-radius: 999px; z-index: 30; font-weight: 700; max-width: calc(100% - 32px);
+  border: 2px solid var(--marca-3); }
 [hidden] { display: none !important; }
-@media (max-width: 420px) { .row { grid-template-columns: 1fr; } .val .num { font-size: 1.35rem; } }
+@media (max-width: 420px) { .row { grid-template-columns: 1fr; } .val .num { font-size: 1.4rem; } h1 { font-size: 1.7rem; } }
+@media (max-width: 700px) { .dome { height: 36px; } .cone, .cone-edge { height: 44px; } .cone-edge { margin-top: -44px; } .legs { height: 40px; margin-top: -28px; } .grid { gap: 22px; } }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="top">
+<header class="hero">
+  <svg class="route" viewBox="0 0 1200 70" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 52 C 160 20, 300 66, 460 40 S 760 8, 900 36 S 1120 60, 1200 28" fill="none" stroke="#f3c64b" stroke-width="2.5" stroke-dasharray="2 9" stroke-linecap="round" opacity=".7"/>
+    <path d="M0 70 L0 60 C 220 40, 420 70, 640 54 S 1000 38, 1200 50 L1200 70 Z" fill="#e06a2c" opacity=".9"/>
+  </svg>
+  <div class="wrap">
     <div>
-      <h1>Fermentadores</h1>
-      <div class="sub">Hammurabier · presión, temperatura y purgas de cono</div>
+      <div class="brand">El Viaje · Hammurabier</div>
+      <h1>Sala de fermentación</h1>
+      <div class="sub">Presión, temperatura y purgas de cono de FM01 a FM06</div>
     </div>
     <button class="btn" id="btn-refresh" type="button">Actualizar</button>
-  </header>
+  </div>
+</header>
+<div class="wrap">
   <div id="banner" class="banner" hidden></div>
   <main class="grid" id="grid" aria-live="polite"></main>
   <div class="foot" id="status">Cargando…</div>
@@ -145,7 +236,7 @@ textarea { font-family: var(--f-ui); min-height: 60px; resize: vertical; }
   "use strict";
   // ====== CONFIG: URL /exec de la web app de Apps Script ======
   var API = 'https://script.google.com/macros/s/AKfycbz2IRRaOMZPAO7pp3EXBoNtib0kjk3rbp5Z9pYurAR-nKpoOnc3jil5k8KqpVSNbvwUwA/exec';
-  var VERSION_PAGINA = 'V1';
+  var VERSION_PAGINA = 'V2';
   var FMS = ['FM01', 'FM02', 'FM03', 'FM04', 'FM05', 'FM06'];
   var STALE_H = 24;            // lectura vieja: más de 24 h
   var SNAP_OLD_MIN = 10;       // foto de estados vieja: más de 10 min
@@ -215,23 +306,69 @@ textarea { font-family: var(--f-ui); min-height: 60px; resize: vertical; }
     return d;
   }
 
+  // Color aproximado de la cerveza según el estilo (solo decorativo)
+  function colorCerveza(prod) {
+    var p = String(prod || '').toLowerCase();
+    if (/stout|porter|negra|schwarz|black/.test(p)) return '#3b1f12';
+    if (/red|roja|amber|ámbar|brown|marzen|märzen|bock|dunkel/.test(p)) return '#9b3d1c';
+    if (/helles|pils|lager|rice|kölsch|kolsch|blonde|rubia|wit|weiss|brut/.test(p)) return '#f0c64a';
+    return '#d9952b';
+  }
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  function svg(tag, attrs, parent) { var e = document.createElementNS(SVGNS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+  // Manómetro 0–30 psi; más de 30 queda al tope
+  function manometro(psi) {
+    var g = el('div', 'gauge'); g.setAttribute('aria-hidden', 'true');
+    var s = svg('svg', { viewBox: '0 0 58 58' }, null);
+    svg('circle', { cx: 29, cy: 31, r: 25, fill: 'var(--surface)', stroke: 'var(--steel-edge)', 'stroke-width': 3 }, s);
+    svg('path', { d: 'M10 40 A21 21 0 1 1 48 40', fill: 'none', stroke: 'var(--line)', 'stroke-width': 4, 'stroke-linecap': 'round' }, s);
+    svg('path', { d: 'M38.9 13.4 A21 21 0 0 1 48 40', fill: 'none', stroke: 'var(--marca-2)', 'stroke-width': 4, 'stroke-linecap': 'round' }, s);
+    var hay = psi !== null && psi !== undefined && psi !== '' && isFinite(Number(psi));
+    var ang = hay ? -125 + Math.max(0, Math.min(30, Number(psi))) / 30 * 250 : -125;
+    var n = svg('g', { 'class': 'needle', transform: 'rotate(' + ang + ' 29 31)' }, s);
+    svg('line', { x1: 29, y1: 31, x2: 29, y2: 12, stroke: hay ? 'var(--ink)' : 'var(--steel-3)', 'stroke-width': 2.5, 'stroke-linecap': 'round' }, n);
+    svg('circle', { cx: 29, cy: 31, r: 3.5, fill: 'var(--marca-1)' }, s);
+    var t = svg('text', { x: 29, y: 50, 'text-anchor': 'middle', 'font-size': 8, 'font-family': 'var(--f-num)', fill: 'var(--muted)' }, s); t.textContent = 'psi';
+    g.appendChild(s); return g;
+  }
+
   function render() {
     var g = $('grid'); g.textContent = '';
-    FMS.forEach(function (fm) {
+    FMS.forEach(function (fm, i) {
       var s = estado ? estado.filter(function (x) { return x.fm === fm; })[0] : null;
-      var c = el('section', 'card'); c.setAttribute('aria-label', fm);
-      var h = el('div', 'head'); h.appendChild(el('div', 'fm', fm));
-      var lot = el('div', 'lot');
       var con = s && s.estado === 'CON LOTE';
+      var t = s && s.temperatura !== null && s.temperatura !== undefined && s.temperatura !== '' ? Number(s.temperatura) : null;
+      var c = el('section', 'card' + (s && !con ? ' vacio' : '') + (t !== null && isFinite(t) ? (t <= 4 ? ' frio' : ' tibio') : '') + (s && s.purga ? ' purgado' : ''));
+      c.setAttribute('aria-label', fm);
+      if (con) c.style.setProperty('--cerveza', colorCerveza(s.producto));
+
+      var tank = el('div', 'tank');
+      tank.appendChild(manometro(s && s.presion));
+      var dome = el('div', 'dome'); dome.appendChild(el('span', 'fm', fm)); tank.appendChild(dome);
+      var body = el('div', 'body');
+      var sight = el('div', 'sight'); var lvl = el('i'); sight.appendChild(lvl); sight.style.setProperty('--nivel', con ? '78%' : '0%'); body.appendChild(sight);
+      if (con) [18, 46, 74, 90].forEach(function (x, k) { var b = el('span', 'bub'); b.style.setProperty('--x', x + '%'); b.style.setProperty('--d', (k * 1.1 + i * .4) + 's'); body.appendChild(b); });
+
+      var plate = el('div', 'plate');
+      var h = el('div', 'head'); var lot = el('div', 'lot');
       if (!s) lot.appendChild(el('div', 'prod', estado ? 'Sin fila en la hoja' : 'Cargando…'));
-      else if (!con) { lot.appendChild(el('span', 'chip', 'Vacío')); if (s.desde) lot.appendChild(el('div', 'prod', 'desde ' + fmtWhen(s.desde))); }
-      else { lot.appendChild(el('div', 'code', s.lote)); lot.appendChild(el('div', 'prod', s.producto + (s.desde ? ' · desde ' + fmtWhen(s.desde) : ''))); }
+      else if (!con) { lot.appendChild(el('span', 'chip vacio', 'Vacío')); if (s.desde) lot.appendChild(el('div', 'prod', 'desde ' + fmtWhen(s.desde))); }
+      else {
+        var code = el('div', 'code'); code.appendChild(el('span', 'beer')); code.appendChild(document.createTextNode(s.lote)); lot.appendChild(code);
+        lot.appendChild(el('div', 'prod', s.producto + (s.desde ? ' · desde ' + fmtWhen(s.desde) : '')));
+      }
       if (s && !s.confirmado) { var ch = el('span', 'chip warn', 'Sin confirmar'); ch.title = 'Dato heredado: se confirma con el primer movimiento'; lot.appendChild(ch); }
-      h.appendChild(lot); c.appendChild(h);
+      h.appendChild(lot); plate.appendChild(h);
       var v = el('div', 'vals');
       v.appendChild(valTile('p', 'Presión', 'psi', s && s.presion, s && s.fechaPresion));
       v.appendChild(valTile('t', 'Temperatura', '°C', s && s.temperatura, s && s.fechaTemperatura));
-      c.appendChild(v);
+      plate.appendChild(v);
+      body.appendChild(plate); tank.appendChild(body);
+
+      tank.appendChild(el('div', 'cone')); tank.appendChild(el('div', 'cone-edge'));
+      var legs = el('div', 'legs'); legs.appendChild(el('div', 'valve')); tank.appendChild(legs);
+      c.appendChild(tank); c.appendChild(el('div', 'floor'));
+
       var pu = el('div', 'purge');
       if (s && s.purga) { pu.appendChild(document.createTextNode('Última purga de cono: ')); pu.appendChild(el('b', '', fmtWhen(s.purga))); if (ago(s.purga)) pu.appendChild(document.createTextNode(' · ' + ago(s.purga))); }
       else pu.textContent = con ? 'Sin purgas de cono en este lote' : 'Sin lote';
