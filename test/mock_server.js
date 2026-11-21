@@ -53,7 +53,7 @@ if (require.main === module) {
     }
     if (u.pathname === '/__down') { globalThis.__down = u.searchParams.get('v') === '1'; res.end('ok'); return; }
     if (u.pathname === '/__movs') { res.writeHead(200, { 'content-type': 'application/json' }); res.end(JSON.stringify(sheets.Movimientos.data)); return; }
-    let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8').replace("var API = '';", `var API = 'http://localhost:${port}/exec';`);
+    let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8').replace(/var API = '[^']*';/, `var API = 'http://localhost:${port}/exec';`);
     res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); res.end(html);
   }).listen(port, () => console.log('mock on ' + port));
 }
