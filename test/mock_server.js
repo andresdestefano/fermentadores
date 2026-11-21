@@ -30,7 +30,7 @@ const sheets = {
 };
 const pad = n => String(n).padStart(2, '0');
 const ctx = {
-  SpreadsheetApp: { getActive: () => ({ getSheetByName: n => sheets[n] || null }), flush: () => {} },
+  SpreadsheetApp: { openById: () => ({ getSheetByName: n => sheets[n] || null }), flush: () => {} },
   LockService: { getScriptLock: () => ({ tryLock: () => true, releaseLock: () => {} }) },
   PropertiesService: { getScriptProperties: () => ({ getProperty: k => (k === 'CLAVE' && CLAVE) ? CLAVE : null }) },
   Utilities: { formatDate: d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}` },

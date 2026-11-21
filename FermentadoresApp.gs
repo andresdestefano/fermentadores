@@ -1,7 +1,7 @@
 /**
  * FermentadoresApp.gs — servidor de la app de fermentadores de Hammurabier (V1).
  *
- * Web app de Apps Script, ligada a la hoja Bitacora_Fermentadores_2026
+ * Web app de Apps Script (proyecto aparte) que abre la hoja Bitacora_Fermentadores_2026
  * (SISTEMA DE INOCUIDAD 2026 / 05 - Trazabilidad). Ejecuta como el dueño.
  *
  * API: GET /exec?api=<funcion>&datos=<json>  →  JSON
@@ -22,6 +22,7 @@
  */
 
 var VERSION = 'V1';
+var HOJA_ID = '1s8XtSHaJ27FXtrG-vy897btuI73Y5RN66qZWa2aYUJk'; // Bitacora_Fermentadores_2026
 var HOJA_ESTADO = 'Fermentadores';
 var HOJA_MOVS = 'Movimientos';
 var FMS = ['FM01', 'FM02', 'FM03', 'FM04', 'FM05', 'FM06'];
@@ -69,7 +70,7 @@ function json_(o) {
 // ---------- lectura de la hoja ----------
 
 function hoja_(nombre) {
-  var h = SpreadsheetApp.getActive().getSheetByName(nombre);
+  var h = SpreadsheetApp.openById(HOJA_ID).getSheetByName(nombre);
   if (!h) throw new Error('Falta la pestaña ' + nombre);
   return h;
 }
